@@ -1,0 +1,62 @@
+name: phonebook
+services:
+  postgres:
+    image: postgres:17
+    container_name: container-phonebook-postgres
+    environment:
+      POSTGRES_USER: postgres-phonebook
+      POSTGRES_PASSWORD: pb-123456
+      POSTGRES_DB: phonebook_contacts_db
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - phonebook-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d phonebook_contacts_db" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:8
+    container_name: container-phonebook-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root-pb
+      MONGO_INITDB_ROOT_PASSWORD: 12345Jc
+      MONGO_INITDB_DATABASE: phonebook_reports
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - phonebook-mongodata:/data/db
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.runCommand({ ping: 1 })" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: container-phonebook-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: pb_user
+      RABBITMQ_DEFAULT_PASS: rabbit_123
+      RABBITMQ_DEFAULT_VHOST: /
+    ports:
+      - "127.0.0.1:5672:5672" # AMQP
+      - "127.0.0.1:15672:15672" # Management UI
+    volumes:
+      - phonebook-rabbitdata:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmq-diagnostics -q ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  phonebook-pgdata:
+  phonebook-mongodata:
+  phonebook-rabbitdata:
