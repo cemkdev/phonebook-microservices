@@ -1,10 +1,10 @@
 ﻿using MassTransit;
 using MongoDB.Driver;
 using Reports.Worker.Infrastructure;
-using Reports.Worker.Projection;
+using Reports.Worker.Models.Projection;
 using Shared.Contracts.ContactInfoEvents;
 
-namespace Reports.Worker.Consumers
+namespace Reports.Worker.Consumers.Projection
 {
     public class ContactInfoAddedConsumer(MongoContext _mongo) : IConsumer<ContactInfoAddedEvent>
     {

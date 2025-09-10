@@ -1,6 +1,5 @@
 ﻿using MongoDB.Driver;
-using Reports.Worker.Projection;
-using System.Xml.Linq;
+using Reports.Worker.Models.Projection;
 
 namespace Reports.Worker.Infrastructure
 {

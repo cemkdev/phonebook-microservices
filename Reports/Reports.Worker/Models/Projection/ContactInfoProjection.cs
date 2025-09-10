@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Reports.Worker.Projection
+namespace Reports.Worker.Models.Projection
 {
     [BsonIgnoreExtraElements]
     public class ContactInfoProjection
