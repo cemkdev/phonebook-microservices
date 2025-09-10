@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using Reports.Worker.Infrastructure;
 using Reports.Worker.Models.Projection;
 using Shared.Contracts.ContactInfoEvents;
+using Shared.Contracts.Enums;
 
 namespace Reports.Worker.Consumers.Projection
 {
@@ -17,7 +18,7 @@ namespace Reports.Worker.Consumers.Projection
             var update = Builders<ContactInfoProjection>.Update
                 .SetOnInsert(x => x.Id, e.InfoId)
                 .SetOnInsert(x => x.ContactId, e.ContactId)
-                .SetOnInsert(nameof(ContactInfoProjection.InfoType), (int)e.InfoType)
+                .SetOnInsert(nameof(ContactInfoProjection.InfoType), (ContactInfoType)e.InfoType)
                 .SetOnInsert(x => x.Content, e.Content);
 
             await _mongo.ContactInfos.UpdateOneAsync(

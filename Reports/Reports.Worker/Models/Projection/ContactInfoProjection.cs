@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Shared.Contracts.Enums;
 
 namespace Reports.Worker.Models.Projection
 {
@@ -16,7 +17,7 @@ namespace Reports.Worker.Models.Projection
         public Guid ContactId { get; set; }
 
         [BsonElement(Order = 2)]
-        public int InfoType { get; set; }
+        public ContactInfoType InfoType { get; set; }
 
         [BsonElement(Order = 3)]
         public string Content { get; set; }

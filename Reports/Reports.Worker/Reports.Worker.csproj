@@ -16,9 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Consumers\Report\" />
-    <Folder Include="Models\Report\" />
-  </ItemGroup>
 </Project>

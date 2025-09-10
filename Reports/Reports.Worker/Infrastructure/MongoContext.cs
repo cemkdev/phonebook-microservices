@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using Reports.Worker.Models.Projection;
+using Reports.Worker.Models.Report;
 
 namespace Reports.Worker.Infrastructure
 {
@@ -17,5 +18,7 @@ namespace Reports.Worker.Infrastructure
 
         public IMongoCollection<ContactInfoProjection> ContactInfos
             => mongoDatabase.GetCollection<ContactInfoProjection>("contact_infos");
+        public IMongoCollection<ReportDocument> Reports
+            => mongoDatabase.GetCollection<ReportDocument>("reports");
     }
 }

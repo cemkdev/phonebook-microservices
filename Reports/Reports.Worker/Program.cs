@@ -1,5 +1,6 @@
 using MassTransit;
 using Reports.Worker.Consumers.Projection;
+using Reports.Worker.Consumers.Report;
 using Reports.Worker.Infrastructure;
 using Shared.Contracts;
 
@@ -11,6 +12,7 @@ builder.Services.AddMassTransit(configurator =>
     configurator.AddConsumer<ContactInfoAddedConsumer>();
     configurator.AddConsumer<ContactInfoRemovedConsumer>();
     configurator.AddConsumer<ContactDeletedConsumer>();
+    configurator.AddConsumer<ReportRequestedConsumer>();
 
     configurator.UsingRabbitMq((context, _configurator) =>
     {
@@ -19,6 +21,7 @@ builder.Services.AddMassTransit(configurator =>
         _configurator.ReceiveEndpoint(RabbitMQSettings.Worker_ContactInfoAddedEventQueue, e => e.ConfigureConsumer<ContactInfoAddedConsumer>(context));
         _configurator.ReceiveEndpoint(RabbitMQSettings.Worker_ContactInfoRemovedEventQueue, e => e.ConfigureConsumer<ContactInfoRemovedConsumer>(context));
         _configurator.ReceiveEndpoint(RabbitMQSettings.Worker_ContactDeletedEventQueue, e => e.ConfigureConsumer<ContactDeletedConsumer>(context));
+        _configurator.ReceiveEndpoint(RabbitMQSettings.Worker_ReportRequestedEventQueue, e => e.ConfigureConsumer<ReportRequestedConsumer>(context));
     });
 });
 
