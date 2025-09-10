@@ -1,23 +1,41 @@
+using MassTransit;
+using Reports.API.Infrastructure;
+using Reports.API.Models.Report;
+using Shared.Contracts.Enums;
+using Shared.Contracts.ReportEvents;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddSingleton<MongoContext>();
+builder.Services.AddMassTransit(configurator =>
+{
+    configurator.UsingRabbitMq((context, _configurator) =>
+    {
+        _configurator.Host(builder.Configuration["RabbitMQ"]);
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.MapPost("/api/reports", async (MongoContext _mongo, IPublishEndpoint _publish) =>
+{
+    var reportId = Guid.NewGuid();
 
-app.MapControllers();
+    var doc = new ReportDocument
+    {
+        Id = reportId,
+        RequestedAt = DateTime.UtcNow,
+        Status = ReportStatus.Preparing,
+        Items = new List<ReportItem>(),
+        Error = null
+    };
+
+    await _mongo.Reports.InsertOneAsync(doc);
+    await _publish.Publish(new ReportRequestedEvent { ReportId = reportId });
+
+    return Results.Ok(new { reportId, status = "Preparing" });
+});
 
 app.Run();
