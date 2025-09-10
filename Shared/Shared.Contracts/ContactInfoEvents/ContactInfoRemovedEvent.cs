@@ -2,9 +2,9 @@
 {
     public record class ContactInfoRemovedEvent
     {
+        public Guid InfoId { get; init; }
         public Guid ContactId { get; init; }
-        public short InfoType { get; init; } // enum
+        public short InfoType { get; init; }
         public string Content { get; init; }
-        public DateTime OccurredAt { get; init; }
     }
 }

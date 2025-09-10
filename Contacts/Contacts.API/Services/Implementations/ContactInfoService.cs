@@ -29,10 +29,10 @@ namespace Contacts.API.Services.Implementations
             // Info Added Event Publish
             var contactInfoAddedEvent = new ContactInfoAddedEvent
             {
+                InfoId = contactInfo.Id,
                 ContactId = addContactInfoDto.ContactId,
                 InfoType = (short)addContactInfoDto.InfoType,
-                Content = addContactInfoDto.Content,
-                OccurredAt = DateTime.UtcNow
+                Content = addContactInfoDto.Content
             };
             await publishEndpoint.Publish(contactInfoAddedEvent, cancellationToken);
 
@@ -51,10 +51,10 @@ namespace Contacts.API.Services.Implementations
             // Info Removed Event Publish
             var contactInfoRemovedEvent = new ContactInfoRemovedEvent
             {
+                InfoId = info.Id,
                 ContactId = info.ContactId,
                 InfoType = (short)info.InfoType,
-                Content = info.Content,
-                OccurredAt = DateTime.UtcNow
+                Content = info.Content
             };
             await publishEndpoint.Publish(contactInfoRemovedEvent, cancellationToken);
 

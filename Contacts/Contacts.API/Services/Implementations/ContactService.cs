@@ -49,8 +49,7 @@ namespace Contacts.API.Services.Implementations
             // Contact Deleted Event Publish
             var contactDeletedEvent = new ContactDeletedEvent
             {
-                ContactId = id,
-                OccurredAt = DateTime.UtcNow
+                ContactId = id
             };
             await publishEndpoint.Publish(contactDeletedEvent, cancellationToken);
 

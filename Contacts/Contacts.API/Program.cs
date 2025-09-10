@@ -23,7 +23,7 @@ builder.Services.AddMassTransit(configurator =>
 {
     configurator.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.Host(builder.Configuration["RabbitMQ:Uri"]);
+        cfg.Host(builder.Configuration["RabbitMQ"]);
     });
 });
 
