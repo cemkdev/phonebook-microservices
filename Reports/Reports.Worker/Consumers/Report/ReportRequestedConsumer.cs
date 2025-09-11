@@ -22,6 +22,8 @@ namespace Reports.Worker.Consumers.Report
                 if (delaySec > 0)
                     await Task.Delay(TimeSpan.FromSeconds(delaySec), cancellationToken);
 
+                //throw new Exception("Fake error!....."); // Burasi aktif edilirse, hata alinmasi ve Failed durumu simule edilebilir...
+
                 // Location'i olan satirlar. ContactID ve Location'lari ile birlikte. ContactId'ler distinct edildi.
                 var locationRows = await _mongo.ContactInfos
                     .Find(x => x.InfoType == ContactInfoType.Location)
