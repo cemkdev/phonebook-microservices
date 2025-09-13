@@ -37,10 +37,13 @@ else
                            asp-controller="Contacts" asp-action="Details" asp-route-id="@c.Id">
                             Details
                         </a>
-                        <a class="btn btn-sm btn-outline-danger ms-1"
-                           asp-controller="Contacts" asp-action="Delete" asp-route-id="@c.Id">
-                            Delete
-                        </a>
+                        <form asp-controller="Contacts" asp-action="Delete" asp-route-id="@c.Id"
+                              method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                                Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }

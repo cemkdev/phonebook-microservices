@@ -77,6 +77,14 @@ namespace Client.Controllers
             return View(detail);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await Api().DeleteAsync(ApiRoutes.Contacts.DeleteContact(id));
+            return RedirectToAction(nameof(Index));
+        }
+
         [HttpGet]
         public IActionResult AddInfo(Guid contactId)
         {
