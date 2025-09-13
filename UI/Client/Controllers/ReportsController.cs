@@ -22,5 +22,24 @@ namespace Client.Controllers
             if (doc is null) return NotFound();
             return View(doc);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Request()
+        {
+            var resp = await Api().PostAsJsonAsync(ApiRoutes.Reports.Request, new { });
+
+            if (resp.IsSuccessStatusCode)
+            {
+                TempData["Flash"] = "Report request submitted.";
+                TempData["FlashType"] = "success";
+            }
+            else
+            {
+                TempData["Flash"] = "Report request failed.";
+                TempData["FlashType"] = "danger";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

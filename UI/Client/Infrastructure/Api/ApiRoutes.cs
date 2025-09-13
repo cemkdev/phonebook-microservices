@@ -17,7 +17,7 @@
         {
             public const string List = "/api/reports";
             public static string ById(Guid id) => $"/api/reports/{id}";
-            public const string Create = "/api/reports";
+            public const string Request = "/api/reports";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model List<Client.Models.Reports.Response.ReportDocumentResponse>
+﻿@* @model List<Client.Models.Reports.Response.ReportDocumentResponse>
 @using Shared.Contracts.Enums
 @{
     ViewData["Title"] = "Reports";
@@ -15,6 +15,89 @@
     <h2 class="mb-0">Reports</h2>
     <button type="button" class="btn btn-primary">Request Report</button>
 </div>
+
+<div class="card">
+    <div class="card-body p-0">
+        @if (Model is null || Model.Count == 0)
+        {
+            <div class="p-3 text-muted">No reports yet.</div>
+        }
+        else
+        {
+            <table class="table table-sm table-striped mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 380px;">Id</th>
+                        <th style="width: 220px;">Requested At</th>
+                        <th style="width: 160px;">Status</th>
+                        <th class="text-end" style="width: 120px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span class="badge bg-body-tertiary text-body-secondary border border-1 small">
+                                    @r.Id
+                                </span>
+                            </td>
+                            <td>@r.RequestedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                <span class="badge @statusBadge(r.Status)">@r.Status</span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-action="Details" asp-route-id="@r.Id">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+ *@
+
+@model List<Client.Models.Reports.Response.ReportDocumentResponse>
+@using Shared.Contracts.Enums
+@{
+    ViewData["Title"] = "Reports";
+    Func<ReportStatus, string> statusBadge = s => s switch
+    {
+        ReportStatus.Preparing => "bg-warning-subtle text-warning-emphasis",
+        ReportStatus.Completed => "bg-success-subtle text-success-emphasis",
+        ReportStatus.Failed => "bg-danger-subtle text-danger-emphasis",
+        _ => "bg-secondary-subtle text-secondary-emphasis"
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Reports</h2>
+    <form asp-action="Request" method="post" class="m-0">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary">Request Report</button>
+    </form>
+</div>
+
+@{
+    var flash = TempData["Flash"] as string;
+    var flashType = (TempData["FlashType"] as string) ?? "success"; // success/danger
+}
+@if (!string.IsNullOrWhiteSpace(flash))
+{
+    <div class="alert alert-@flashType flash-auto-hide" role="alert">
+        @flash
+    </div>
+
+    <style>
+        @@keyframes fadeOut { to { opacity: 0; } }
+        .flash-auto-hide {
+            animation: fadeOut .6s ease forwards;
+            animation-delay: 3s;
+        }
+    </style>
+}
 
 <div class="card">
     <div class="card-body p-0">
