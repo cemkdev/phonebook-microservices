@@ -8,6 +8,6 @@
         public string Company { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public List<ContactInfoDto> Infos { get; set; } = new();
+        public List<ContactInfoDto> Info { get; set; } = new();
     }
 }

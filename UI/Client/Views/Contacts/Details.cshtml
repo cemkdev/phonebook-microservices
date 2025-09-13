@@ -1,0 +1,83 @@
+﻿@model Client.Models.Responses.ContactDetailDto
+@using Client.Models.Responses
+
+@{
+    ViewData["Title"] = "Contact Details";
+    var infos = Model.Info ?? new List<ContactInfoDto>();
+}
+
+<div class="container-fluid">
+
+    <!-- Top: Contact summary (looks aligned like a table, but minimal, no hover) -->
+    <div class="card mb-4">
+        <div class="card-header pb-0"><h4>Contact</h4></div>
+        <div class="card-body pt-1 pb-2">
+            <table class="table table-sm table-borderless mb-0 align-middle">
+                <thead class="border-bottom">
+                    <tr>
+                        <th style="width: 160px;">First Name</th>
+                        <th style="width: 160px;">Last Name</th>
+                        <th style="width: 220px;">Company</th>
+                        <th style="width: 200px;">Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.FirstName</td>
+                        <td>@Model.LastName</td>
+                        <td>@Model.Company</td>
+                        <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bottom: Contact Info (real table), left aligned, ~half width, slightly smaller -->
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center pb-0" style="background: none">
+                    <h5>Contact Info</h5>
+                    <a class="btn btn-sm btn-primary mb-2"
+                       asp-action="AddInfo"
+                       asp-route-contactId="@Model.Id">
+                        Add Info
+                    </a>
+                </div>
+
+                <div class="card-body p-0">
+                    @if (infos.Count == 0)
+                    {
+                        <div class="p-3 text-muted">No contact info yet.</div>
+                    }
+                    else
+                    {
+                        <table class="table table-sm table-striped mb-0">
+                            <tbody>
+                                @foreach (var info in infos)
+                                {
+                                    <tr>
+                                        <td style="padding-left: 15px; font-weight: 500">@info.InfoType</td>
+                                        <td>@info.Content</td>
+                                        <td class="text-end" style="padding-right:15px">
+                                            <form asp-action="RemoveInfo" method="post" class="d-inline">
+                                                <input type="hidden" name="contactId" value="@Model.Id" />
+                                                <input type="hidden" name="infoId" value="@info.InfoId" />
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+</div>
