@@ -40,9 +40,33 @@ namespace Client.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var list = await Api().GetFromJsonAsync<List<ContactListDto>>(ApiRoutes.Contacts.ContactList);
-            return View(list);
+            var client = Api();
+
+            const int maxAttempts = 5;
+            const int delayMs = 800;
+
+            List<ContactListDto>? list = null;
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    list = await client.GetFromJsonAsync<List<ContactListDto>>(ApiRoutes.Contacts.ContactList);
+                    break; // success
+                }
+                catch (HttpRequestException) when (attempt < maxAttempts)
+                {
+                    await Task.Delay(delayMs);
+                }
+                catch (TaskCanceledException) when (attempt < maxAttempts)
+                {
+                    await Task.Delay(delayMs);
+                }
+            }
+
+            return View(list ?? new List<ContactListDto>());
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
