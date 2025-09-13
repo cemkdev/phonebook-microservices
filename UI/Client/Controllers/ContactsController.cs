@@ -2,7 +2,6 @@
 using Client.Models.Requests;
 using Client.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Contracts.Enums;
 
 namespace Client.Controllers
 {

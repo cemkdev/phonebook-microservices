@@ -1,0 +1,109 @@
+﻿@model Client.Models.Reports.Response.ReportDocumentResponse
+@using Client.Models.Reports.Response
+@using Shared.Contracts.Enums
+@{
+    ViewData["Title"] = "Report Details";
+
+    var items = Model.Items ?? new List<ReportItemResponse>();
+    Func<ReportStatus, string> statusBadge = s => s switch
+    {
+        ReportStatus.Preparing => "bg-warning-subtle text-warning-emphasis",
+        ReportStatus.Completed => "bg-success-subtle text-success-emphasis",
+        ReportStatus.Failed => "bg-danger-subtle text-danger-emphasis",
+        _ => "bg-secondary-subtle text-secondary-emphasis"
+    };
+}
+
+<div class="card mb-4 shadow-sm border-start border-3 border-primary-subtle rounded-3">
+    <div class="card-header bg-body-tertiary">
+        <h5 class="mb-0 fw-semibold fs-5 text-body-emphasis">Report</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="px-2 py-2">
+            <table class="table table-sm table-borderless mb-0 align-middle">
+                <thead class="border-bottom">
+                    <tr>
+                        <th style="width: 380px;">Id</th>
+                        <th style="width: 220px;">Requested At</th>
+                        <th style="width: 160px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <span class="badge bg-body-tertiary text-body-secondary border border-1 small">
+                                @Model.Id
+                            </span>
+                        </td>
+                        <td>@Model.RequestedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <span class="badge @statusBadge(Model.Status)">@Model.Status</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="alert alert-danger mt-2 mb-0">
+                    @Model.Error
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-semibold">Report Content</h6>
+            </div>
+            <div class="card-body p-0">
+                @if (items.Count == 0)
+                {
+                    <div class="py-2 text-muted" style="padding-left: 15px;">No items yet.</div>
+                }
+                else
+                {
+                    <table class="table table-sm table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-0" style="width: 220px;"></th>
+                                @for (var i = 0; i < items.Count; i++)
+                                {
+                                    <th style="font-size: 15px; font-weight: 500;">Location @(i + 1)</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th style="font-size: 15px; font-weight: 500; padding-left: 15px;">Location</th>
+                                @foreach (var it in items)
+                                {
+                                    <td>@it.Location</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="font-size: 15px; font-weight: 500; padding-left: 15px;">Contact Count</th>
+                                @foreach (var it in items)
+                                {
+                                    <td>@it.ContactCount</td>
+                                }
+                            </tr>
+                            <tr>
+                                <th style="font-size: 15px; font-weight: 500; padding-left: 15px;">Phone Count</th>
+                                @foreach (var it in items)
+                                {
+                                    <td>@it.PhoneCount</td>
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
