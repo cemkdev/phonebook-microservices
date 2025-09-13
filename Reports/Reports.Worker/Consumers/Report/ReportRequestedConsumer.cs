@@ -7,7 +7,7 @@ using Shared.Contracts.ReportEvents;
 
 namespace Reports.Worker.Consumers.Report
 {
-    public class ReportRequestedConsumer(MongoContext _mongo, IConfiguration _configuration) : IConsumer<ReportRequestedEvent>
+    public class ReportRequestedConsumer(MongoContext _mongo, IConfiguration _configuration, IPublishEndpoint _publish) : IConsumer<ReportRequestedEvent>
     {
         public async Task Consume(ConsumeContext<ReportRequestedEvent> context)
         {
@@ -81,6 +81,12 @@ namespace Reports.Worker.Consumers.Report
                     .Set(x => x.Error, null);
 
                 await _mongo.Reports.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+
+                await _publish.Publish(new ReportStatusChangedEvent
+                {
+                    ReportId = reportId,
+                    Status = ReportStatus.Completed
+                });
             }
             catch (Exception ex)
             {
@@ -91,6 +97,12 @@ namespace Reports.Worker.Consumers.Report
                     .Set(x => x.Error, ex.Message);
 
                 await _mongo.Reports.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
+
+                await _publish.Publish(new ReportStatusChangedEvent
+                {
+                    ReportId = reportId,
+                    Status = ReportStatus.Failed
+                });
             }
         }
     }

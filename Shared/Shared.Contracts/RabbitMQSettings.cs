@@ -6,5 +6,6 @@
         public const string Worker_ContactInfoRemovedEventQueue = "worker-contact-info-removed-event-queue";
         public const string Worker_ContactDeletedEventQueue = "worker-contact-deleted-event-queue";
         public const string Worker_ReportRequestedEventQueue = "worker-report-requested-event-queue";
+        public const string ReportsAPI_ReportStatusChangedEventQueue = "reports-api-report-status-changed-event-queue";
     }
 }

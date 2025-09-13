@@ -1,24 +1,40 @@
 using MassTransit;
 using MongoDB.Driver;
+using Reports.API.Consumers;
+using Reports.API.Hubs;
 using Reports.API.Infrastructure;
 using Reports.API.Models.Report;
+using Shared.Contracts;
 using Shared.Contracts.Enums;
 using Shared.Contracts.ReportEvents;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("client", p => p
+        .WithOrigins("https://localhost:7213")
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+});
+
 builder.Services.AddSingleton<MongoContext>();
+builder.Services.AddSignalR();
 builder.Services.AddMassTransit(configurator =>
 {
+    configurator.AddConsumer<ReportStatusChangedConsumer>();
     configurator.UsingRabbitMq((context, _configurator) =>
     {
         _configurator.Host(builder.Configuration["RabbitMQ"]);
+        _configurator.ReceiveEndpoint(RabbitMQSettings.ReportsAPI_ReportStatusChangedEventQueue, e => e.ConfigureConsumer<ReportStatusChangedConsumer>(context));
     });
 });
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
+app.UseCors("client");
 
 // Request a Report
 app.MapPost("/api/reports", async (MongoContext _mongo, IPublishEndpoint _publish) =>
@@ -60,5 +76,7 @@ app.MapGet("/api/reports/{id:guid}", async (Guid id, MongoContext mongo, Cancell
 
     return doc is not null ? Results.Ok(doc) : Results.NotFound();
 });
+
+app.MapHub<ReportsHub>("/hubs/reports");
 
 app.Run();

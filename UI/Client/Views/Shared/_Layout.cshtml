@@ -46,5 +46,73 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
+
+
+    <!-- SignalR client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"
+            crossorigin="anonymous"></script>
+
+    <div id="rt-alerts" class="position-fixed top-0 end-0 p-3" style="z-index:1080;"></div>
+
+    <style>
+        @@keyframes rtFade {
+            to {
+                opacity: 0;
+            }
+        }
+
+        .rt-alert {
+            min-width: 320px;
+        }
+
+        .rt-autohide {
+            animation: rtFade .6s ease forwards;
+            animation-delay: 5s;
+        }
+    </style>
+
+    <script>
+        (function () {
+          const hubUrl = "https://localhost:7183/hubs/reports";
+          const conn = new signalR.HubConnectionBuilder()
+              .withUrl(hubUrl, { withCredentials: true })
+              .withAutomaticReconnect()
+              .build();
+
+          conn.on("ReportUpdated", function (p) {
+            try {
+              const id = p && p.reportId ? p.reportId : "";
+              const st = p && p.status;
+
+              let cls = "alert-secondary", text = "Report updated";
+              if (st === 1) { cls = "alert-success"; text = "Report completed"; }
+              else if (st === 2) { cls = "alert-danger"; text = "Report failed"; }
+
+              const html =
+                `<div class="alert ${cls} rt-alert rt-autohide shadow-sm border" role="alert">
+                   <div class="d-flex align-items-center gap-2">
+                     <strong class="me-1">${text}</strong>
+                     <small class="text-body-secondary">(${id})</small>
+                     <a class="ms-auto btn btn-sm btn-outline-secondary" href="/Reports/Details/${id}">View</a>
+                   </div>
+                 </div>`;
+
+              document.getElementById("rt-alerts").insertAdjacentHTML("afterbegin", html);
+            } catch { }
+
+            var path = location.pathname.toLowerCase();
+            if (path === "/reports" || path === "/reports/index") {
+                setTimeout(function () { location.reload(); }, 3000);
+            }
+          });
+
+          conn.start()
+            .then(() => conn.invoke("JoinGlobal").catch(() => {}))
+            .catch(() => { });
+        })();
+    </script>
+
 </body>
 </html>
