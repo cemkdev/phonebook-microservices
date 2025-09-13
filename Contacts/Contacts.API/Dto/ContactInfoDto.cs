@@ -2,9 +2,9 @@
 
 namespace Contacts.API.Dto
 {
-    public class AddContactInfoDto
+    public class ContactInfoDto
     {
-        public Guid ContactId { get; set; }
+        public Guid InfoId { get; set; }
         public ContactInfoType InfoType { get; set; }
         public string Content { get; set; }
     }

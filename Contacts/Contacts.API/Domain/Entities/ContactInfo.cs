@@ -1,4 +1,4 @@
-﻿using Contacts.API.Domain.Enums;
+﻿using Shared.Contracts.Enums;
 
 namespace Contacts.API.Domain.Entities
 {

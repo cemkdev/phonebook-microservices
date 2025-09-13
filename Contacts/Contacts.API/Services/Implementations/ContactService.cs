@@ -28,13 +28,53 @@ namespace Contacts.API.Services.Implementations
             return affected > 0;
         }
 
-        public async Task<Contact?> GetAsync(Guid id, CancellationToken cancellationToken)
-            => await contactsDbContext.Contacts
-                .Include(c => c.ContactInfos)
-                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        public async Task<ContactDetailDto> GetAsync(Guid id, CancellationToken cancellationToken)
+        {
+            var contact = contactsDbContext
+                            .Contacts
+                            .AsNoTracking()
+                            .Where(c => c.Id == id);
 
-        public async Task<List<Contact>> ListAsync(CancellationToken cancellationToken)
-            => await contactsDbContext.Contacts.AsNoTracking().ToListAsync(cancellationToken);
+            var contactDto = await contact
+                            .Select(c => new ContactDetailDto
+                            {
+                                Id = c.Id,
+                                FirstName = c.FirstName,
+                                LastName = c.LastName,
+                                Company = c.Company,
+                                CreatedAt = c.CreatedAt,
+                                Info = c.ContactInfos
+                                        .OrderBy(i => i.InfoType)
+                                        .Select(i => new ContactInfoDto
+                                        {
+                                            InfoId = i.Id,
+                                            InfoType = i.InfoType,
+                                            Content = i.Content
+                                        })
+                                        .ToList()
+                            })
+                            .FirstOrDefaultAsync(cancellationToken);
+
+            return contactDto;
+        }
+
+        public async Task<List<ContactListDto>> ListAsync(CancellationToken cancellationToken)
+        {
+            var contacts = contactsDbContext.Contacts.AsNoTracking();
+
+            var contactsDto = await contacts
+                            .Select(c => new ContactListDto
+                            {
+                                Id = c.Id,
+                                FirstName = c.FirstName,
+                                LastName = c.LastName,
+                                Company = c.Company,
+                                CreatedAt = c.CreatedAt
+                            })
+                            .ToListAsync(cancellationToken);
+
+            return contactsDto;
+        }
 
         public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
         {
