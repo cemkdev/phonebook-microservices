@@ -6,7 +6,7 @@
         {
             public const string ContactList = "/api/contact";
             public static string ContactById(Guid id) => $"/api/contact/{id}";
-            public const string CreateContact = "/api/contacts";
+            public const string CreateContact = "/api/contact";
             public static string DeleteContact(Guid id) => $"/api/contact/{id}";
 
             public const string AddInfo = "/api/contactinfo";

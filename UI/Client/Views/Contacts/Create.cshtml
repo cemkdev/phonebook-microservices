@@ -1,0 +1,36 @@
+﻿@model Client.Models.Requests.CreateContactRequest
+@{
+    ViewData["Title"] = "Create Contact";
+}
+
+<h2 class="mb-3">Create Contact</h2>
+
+<form asp-action="Create" method="post" class="card">
+    <div class="card-body">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="mb-3">
+            <label asp-for="FirstName" class="form-label"></label>
+            <input asp-for="FirstName" class="form-control" required />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control" required />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Company" class="form-label"></label>
+            <input asp-for="Company" class="form-control" required />
+            <span asp-validation-for="Company" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="card-footer d-flex gap-2">
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+</form>
