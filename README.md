@@ -13,7 +13,7 @@ A minimal microservices sample for a phonebook domain.
 
 ## Prerequisites
 - Docker & Docker Compose (for PostgreSQL, MongoDB, RabbitMQ containers)
-- .NET 8 SDK
+- .NET 9 SDK
 - (Optional) Visual Studio 2022
 
 ## Quick Start
